@@ -29,11 +29,10 @@ USER root
 COPY ./nginx.conf /etc/nginx/nginx.conf
 
 # Create a directory for the PID file and set ownership
-RUN mkdir -p /var/run/nginx && \
-    chown nginx:nginx /var/run/nginx
-
 # Remove default nginx index page
-RUN rm -rf /usr/share/nginx/html/*
+RUN mkdir -p /var/run/nginx && \
+    chown nginx:nginx /var/run/nginx && \
+    rm -rf /usr/share/nginx/html/*
 
 # Copy built application from the build-stage and set ownership
 COPY --from=build-stage /app/dist /usr/share/nginx/html
@@ -44,8 +43,8 @@ RUN chown -R nginx:nginx /usr/share/nginx/html && \
 
 # Copy the environment runtime editor script
 COPY ./env_runtime_editor.sh /env_runtime_editor.sh
-RUN sed -i 's/\r$//' /env_runtime_editor.sh
-RUN chmod +x /env_runtime_editor.sh
+RUN sed -i 's/\r$//' /env_runtime_editor.sh && \
+    chmod +x /env_runtime_editor.sh
 
 # Switch back to the non-root user provided by the image
 USER nginx
